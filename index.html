@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Teacher's Day!</title>
+    
+    <!-- Added a premium Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* CSS VARIABLES FOR EASY THEMING */
+        :root {
+            --primary-color: #6a5bad;
+            --primary-hover: #504485;
+            --bg-overlay: rgba(106, 91, 173, 0.85);
+            --text-main: #2d3748;
+            --text-muted: #718096;
+            --white: #ffffff;
+        }
+
+        /* 
+           MAJOR FIX: Removed the * selector for the background image. 
+           Applying backgrounds to * causes severe performance issues and visual bugs.
+        */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: var(--primary-color);
+            background-image: url('bgImg.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-blend-mode: overlay;
+            color: var(--text-main);
+        }
+
+        /* MODERN GLASSMORPHISM CONTAINER */
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(12px);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            max-width: 450px;
+            width: 90%;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* VIEW TRANSITIONS */
+        .view {
+            display: none;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        .view.active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* FLOATING ANIMATION FOR INBOX */
+        .floating-icon {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-12px); }
+            100% { transform: translateY(0px); }
+        }
+
+        /* IMAGE STYLING */
+        img {
+            width: 100%;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            margin-bottom: 24px;
+        }
+
+        #greeting-view img {
+            height: 220px;
+            object-fit: cover;
+        }
+
+        /* TYPOGRAPHY */
+        h1, h2 {
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 12px;
+        }
+
+        p {
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin-bottom: 24px;
+            font-size: 15px;
+        }
+
+        /* STYLED GREETING TEXT */
+        .highlight-text {
+            color: var(--text-main);
+            background: rgba(106, 91, 173, 0.05);
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 4px solid var(--primary-color);
+            font-size: 16px;
+            font-weight: 400;
+            text-align: left;
+            margin-top: 10px;
+        }
+
+        /* MODERN BUTTON */
+        button {
+            background: linear-gradient(135deg, var(--primary-color), #8e7cc3);
+            color: var(--white);
+            border: none;
+            padding: 16px 32px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            font-family: inherit;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(106, 91, 173, 0.3);
+        }
+
+        button:active {
+            transform: translateY(1px);
+        }
+    </style>
+</head>
+<body>
+
+    <audio id="bgMusic" loop>
+        <source src="music.mp3" type="audio/mpeg">
+    </audio>
+
+    <main class="container">
+        
+        <!-- Inbox View -->
+        <div class="view active" id="inbox-view">
+            <div class="floating-icon">
+                <img src="inbox.jpg" alt="A mysterious closed envelope">
+            </div>
+            <h1>Special Delivery!</h1>
+            <p>A message has arrived out of nowhere. What's inside this envelope?</p>
+            <button id="openBtn">Open Message</button>
+        </div>
+
+        <!-- Greeting View -->
+        <div class="view" id="greeting-view">
+            <img src="greeting.jpg" alt="Happy Teacher's Day Celebration">
+            <h2>Happy Teacher's Day</h2>
+            <div class="highlight-text">
+                Thank you for your endless patience, inspiring lessons, and for guiding us to become better versions of ourselves. Your hard work does not go unnoticed. We appreciate everything you do!
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const openBtn = document.getElementById('openBtn');
+            const inboxView = document.getElementById('inbox-view');
+            const greetingView = document.getElementById('greeting-view');
+            const bgMusic = document.getElementById('bgMusic');
+
+            openBtn.addEventListener('click', () => {
+                // 1. Fade out inbox
+                inboxView.classList.remove('active');
+                
+                // 2. Wait for fade transition, then swap elements
+                setTimeout(() => {
+                    inboxView.style.display = 'none';
+                    greetingView.style.display = 'block';
+                    
+                    // Force DOM reflow to ensure the fade-in animation triggers
+                    void greetingView.offsetWidth;
+                    
+                    // 3. Fade in greeting
+                    greetingView.classList.add('active');
+                    
+                    // 4. Play music with error handling
+                    bgMusic.volume = 0.5; // Soften the volume so it doesn't jump scare the user
+                    bgMusic.play().catch(error => {
+                        console.log("Audio playback requires user interaction: ", error);
+                    });
+                }, 500); // Matches the CSS transition duration
+            });
+        });
+    </script>
+</body>
+</html>
